@@ -1,0 +1,28 @@
+.root {
+  position: relative;
+  width: 100%;
+  border-spacing: 0px;
+  max-width: 64ch;
+}
+
+.body {
+}
+
+.row {
+  border-spacing: 0px;
+
+  &:first-child {
+    font-weight: 600;
+  }
+
+  &:focus {
+    background: var(--theme-focused-foreground);
+    outline: 0;
+  }
+}
+
+.column {
+  border: 0;
+  outline: 0;
+  padding-right: 1ch;
+}
