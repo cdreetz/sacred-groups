@@ -14,37 +14,88 @@ import ActionButton from '@components/ActionButton';
 export default function CalEntry() {
   const router = useRouter();
   const [calName, setCalName] = React.useState('');
+  const [leaderCode, setLeaderCode] = React.useState('');
+  const [showLeaderInput, setShowLeaderInput] = React.useState(false);
   const [error, setError] = React.useState('');
 
-  const handleSubmit = () => {
+  const handleView = () => {
     if (!calName.trim()) {
-      setError('Please enter a calendar name');
+      setError('Please enter a group name');
       return;
     }
     router.push(`/cal/${calName.toLowerCase()}`);
   };
 
+  const handleManage = () => {
+    if (!calName.trim()) {
+      setError('Please enter a group name');
+      return;
+    }
+    setShowLeaderInput(true);
+  };
+
+  const handleLeaderSubmit = () => {
+    if (!leaderCode.trim()) {
+      setError('Please enter the leader code');
+      return;
+    }
+    router.push(`/cal/${calName.toLowerCase()}/manage?code=${leaderCode}`);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      handleSubmit();
+      if (showLeaderInput) {
+        handleLeaderSubmit();
+      } else {
+        handleView();
+      }
     }
   };
 
   return (
-    <Card title="ENTER CALENDAR">
-      <div className={styles.inputContainer}>
-        <Input
-          label="NAME"
-          value={calName}
-          onChange={(e) => setCalName(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Enter calendar name"
-          error={error}
-        />
-        <ActionButton onClick={handleSubmit}>
-          CONTINUE →
-        </ActionButton>
-      </div>
-    </Card>
+    <div className={styles.pageContainer}>
+      <Card title="SACRED GROUP">
+        <div className={styles.inputContainer}>
+          <Input
+            label="SACRED"
+            value={calName}
+            onChange={(e) => setCalName(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="GROUP NAME"
+            error={error}
+          />
+          {showLeaderInput ? (
+            <>
+              <Input
+                label="SACRED LEADER"
+                value={leaderCode}
+                onChange={(e) => setLeaderCode(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="LEADER CODE"
+                type="password"
+                error={error}
+              />
+              <div className={styles.buttonContainer}>
+                <ActionButton onClick={handleLeaderSubmit}>
+                  CONTINUE →
+                </ActionButton>
+                <ActionButton onClick={() => setShowLeaderInput(false)}>
+                  BACK
+                </ActionButton>
+              </div>
+            </>
+          ) : (
+            <div className={styles.buttonContainer}>
+              <ActionButton onClick={handleView}>
+                VIEW GROUP →
+              </ActionButton>
+              <ActionButton onClick={handleManage}>
+                MANAGE GROUP →
+              </ActionButton>
+            </div>
+          )}
+        </div>
+      </Card>
+    </div>
   );
 }
