@@ -5,8 +5,9 @@ import styles from '@components/DatePicker.module.scss';
 import * as React from 'react';
 
 interface DatePickerProps {
-  year?: number;
-  month?: number;
+  year: number;
+  month: number;
+  events?: string[];
 }
 
 const WEEKDAYS = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
@@ -18,10 +19,16 @@ const MONTH_NAMES = [
 
 const MAX_CELLS = 42;
 
-const DatePicker: React.FC<DatePickerProps> = ({ year, month }) => {
+const DatePicker: React.FC<DatePickerProps> = ({ year, month, events = [] }) => {
+  console.log('Events passed to DatePicker:', events);
   const today = new Date();
   const [currentYear, setYear] = React.useState(year || today.getFullYear());
   const [currentMonth, setMonth] = React.useState(month || today.getMonth() + 1);
+
+  const hasEvent = (date: string) => {
+    console.log('Checking date:', date, 'Events:', events, 'Has event:', events.includes(date));
+    return events.includes(date);
+  };
 
   const first = new Date(currentYear, currentMonth - 1, 1);
   const startingWeekday = first.getDay();
@@ -35,14 +42,21 @@ const DatePicker: React.FC<DatePickerProps> = ({ year, month }) => {
 
   for (let day = 1; day <= daysInMonth; day++) {
     const presentationDay = String(day).padStart(2, '0');
+    const dateString = `${currentYear}-${String(currentMonth).padStart(2, '0')}-${presentationDay}`;
+    
     cells.push(
       <div
         key={day}
         className={styles.cell}
         tabIndex={0}
-        aria-label={`${currentYear}-${String(currentMonth).padStart(2, '0')}-${presentationDay}`}
+        aria-label={dateString}
       >
-        {presentationDay}
+        <div className={styles.day}>
+          {presentationDay}
+          {hasEvent(dateString) && (
+            <span className={styles.eventDot} />
+          )}
+        </div>
       </div>
     );
   }
